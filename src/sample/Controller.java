@@ -286,15 +286,45 @@ public class Controller {
         return popup;
     }
 
-    public static void showPopupMessage(final String message, final Stage stage) {
-        final Popup popup = createPopup(message);
-        popup.setOnShown(new EventHandler<WindowEvent>() {
-            @Override
-            public void handle(WindowEvent e) {
-                popup.setX(stage.getX() + stage.getWidth() / 2 - popup.getWidth() / 2);
-                popup.setY(stage.getY() + stage.getHeight() / 2 - popup.getHeight() / 2);
-            }
-        });
-        popup.show(stage);
+    private static void sendActionEvent(int id, double latitude, double longitude)
+            throws EventHubException, IOException {
+
+        final ConnectionStringBuilder connStr = new ConnectionStringBuilder()
+                .setNamespaceName("ImagineEventHub") // to target National clouds - use .setEndpoint(URI)
+                .setEventHubName("ambulanceaction")
+                .setSasKeyName("RootManageSharedAccessKey")
+                .setSasKey("0gojY/0LXX9pX8B3LdshdEE0/9WGNJsoSlbp504DizQ=");
+
+        final Gson gson = new GsonBuilder().create();
+
+
+        // The Executor handles all asynchronous tasks and this is passed to the EventHubClient instance.
+        // This enables the user to segregate their thread pool based on the work load.
+        // This pool can then be shared across multiple EventHubClient instances.
+        // The following sample uses a single thread executor, as there is only one EventHubClient instance,
+        // handling different flavors of ingestion to Event Hubs here.
+        final ExecutorService executorService = Executors.newSingleThreadExecutor();
+
+        // Each EventHubClient instance spins up a new TCP/SSL connection, which is expensive.
+        // It is always a best practice to reuse these instances. The following sample shows this.
+        final EventHubClient ehClient = EventHubClient.createSync(connStr.toString(), executorService);
+
+        try {
+
+            SendAmbulanceMessage message = new SendAmbulanceMessage(id, new GeoCoordinate(latitude, longitude), new GeoCoordinate(0d,0d)); //TODO: hospital pos
+            byte[] payloadBytes = gson.toJson(message).getBytes(Charset.defaultCharset());
+            EventData sendEvent = EventData.create(payloadBytes);
+
+            // Send - not tied to any partition
+            // Event Hubs service will round-robin the events across all Event Hubs partitions.
+            // This is the recommended & most reliable way to send to Event Hubs.
+            ehClient.sendSync(sendEvent);
+            System.out.println("sent successfully");
+
+        } finally {
+            ehClient.closeSync();
+            executorService.shutdown();
+        }
     }
+
 }
