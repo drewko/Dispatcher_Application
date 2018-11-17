@@ -8,7 +8,8 @@
 <?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.AnchorPane?>
 
-<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="307.0" prefWidth="373.0" xmlns="http://javafx.com/javafx/8.0.172-ea" xmlns:fx="http://javafx.com/fxml/1" fx:controller="sample.Controller">
+
+<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="307.0" prefWidth="373.0" xmlns="http://javafx.com/javafx/8.0.172-ea" xmlns:fx="http://javafx.com/fxml/1" fx:controller="sample.Controller" >
 
       <ListView fx:id="listView" layoutX="14.0" layoutY="99.0" onMouseClicked="#onClickListView" prefHeight="200.0" prefWidth="275.0" />
    <Button fx:id="button" layoutX="295.0" layoutY="184.0" mnemonicParsing="false" onAction="#onClickButton" prefHeight="25.0" prefWidth="68.0" text="Send" />

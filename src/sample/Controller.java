@@ -34,7 +34,6 @@ public class Controller {
     public Button button;
     public TextField text;
     public ImageView loader;
-
     @FXML
     public void initialize() {
         loader.setVisible(false);
@@ -43,20 +42,37 @@ public class Controller {
 
     public static final String ID = "bB3VUSqETrjqixgsfp6l";
     public static final String CODE = "ajOsRiWYp44kvThQz0YjoQ";
+    //Database connection
+    private static final String account = "https://imagineapp.documents.azure.com:443/";
+    private static final String key = "Q4ZdZbExoYEv8g7jUCWIt2ajVY8Rl3DysTKCMhCJzQQD54HwetZWqSSwXZpMTQyCIsLqyXVym8ZidjOEM5h11w==";
+    private static final String collectionLink = "dbs/ImagineCosmo/colls/GPSCollection";
+    private static final String collectionLinkAction = "dbs/ImagineCosmo/colls/ActionCollection";
+    private static DocumentClient client = new DocumentClient(account, key, ConnectionPolicy.GetDefault(), ConsistencyLevel.Session);
+
 
     List<Ambulance> freeAmbulances = new ArrayList<>();
     String selectedId;
     Ambulance selectedAmbulance;
 
     static double[] coordinates = new double[2];
-
     public void updateAmbulanceList(double x1, double x2) {
-        freeAmbulances.clear();
-        freeAmbulances.add(new Ambulance("0", 50.077797, 19.924892));
-        freeAmbulances.add(new Ambulance("1", 50.244883, 23.130384));
-        freeAmbulances.add(new Ambulance("2", 52.406376, 16.925167));
-        freeAmbulances.add(new Ambulance("3", 54.352024, 18.646639));
-        freeAmbulances.add(new Ambulance("4", 52.229675, 21.012230));
+        List<Document> ambulanceList = client.queryDocuments(collectionLink, "SELECT r.id,r.latitude,r.longitude FROM root r ", null, null)
+                .getQueryIterable()
+                .toList();
+
+        List<Document> ambulanceBusy = client.queryDocuments(collectionLinkAction, "SELECT r.ambulanceId FROM root r ", null, null)
+                .getQueryIterable()
+                .toList();
+
+        List<String> busyAmbulancesId = new ArrayList<>();
+
+        ambulanceBusy.forEach(e->busyAmbulancesId.add(e.get("ambulanceId").toString()));
+
+
+        for(Document doc:ambulanceList){
+            if(!busyAmbulancesId.contains(doc.get("id").toString()))
+                freeAmbulances.add(new Ambulance(doc.get("id").toString(),Double.valueOf(doc.get("latitude").toString()),Double.valueOf(doc.get("longitude").toString())));
+        }
 
         for (Ambulance car : freeAmbulances) {
             double[] result;
@@ -127,6 +143,13 @@ public class Controller {
                     @Override
                     public void run() {
                         updateList();
+                        try {
+                            sendActionEvent(Integer.parseInt(selectedId),coordinates[0],coordinates[1]);
+                        } catch (EventHubException e) {
+                            e.printStackTrace();
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
                         listView.setItems(null);
 
                     }
