@@ -88,12 +88,9 @@ public class Controller {
 
 
     public void onClickListView() {
-        try
-        {
+        try {
             selectedId = listView.getSelectionModel().getSelectedItems().get(0).toString().split(" ")[1];
-        }
-        catch (Exception e)
-        {
+        } catch (Exception e) {
             System.out.println("Taking prev index");
         }
 
@@ -107,43 +104,43 @@ public class Controller {
     }
 
     public void onClickButton() throws IOException {
-            Thread thread = new Thread(new Task<Void>() {
-                @Override
-                protected Void call() throws Exception {
-                    String adress = text.getText();
+        Thread thread = new Thread(new Task<Void>() {
+            @Override
+            protected Void call() throws Exception {
+                String adress = text.getText();
 
-                    try {
-                        coordinates = parse(adress);
-                    } catch (JSONException e) {
-                        System.out.println("JSON ERROR");
-                    }
-
-                    System.out.println("Ambulance nr " + selectedId + " ahead " + adress + " " + coordinates[0] + " " + coordinates[1]);
-
-                    for (int i = 0; i < freeAmbulances.size(); i++) {
-                        if (freeAmbulances.get(i).getId().equals(selectedId)) {
-                            freeAmbulances.remove(i);
-                        }
-                    }
-
-                    Platform.runLater(new Runnable() {
-                        @Override
-                        public void run() {
-                            updateList();
-                            listView.setItems(null);
-
-                        }
-                    });
-                    return null;
+                try {
+                    coordinates = parse(adress);
+                } catch (JSONException e) {
+                    System.out.println("JSON ERROR");
                 }
-            });
-            thread.setDaemon(true);
-            thread.start();
+
+                System.out.println("Ambulance nr " + selectedId + " ahead " + adress + " " + coordinates[0] + " " + coordinates[1]);
+
+                for (int i = 0; i < freeAmbulances.size(); i++) {
+                    if (freeAmbulances.get(i).getId().equals(selectedId)) {
+                        freeAmbulances.remove(i);
+                    }
+                }
+
+                Platform.runLater(new Runnable() {
+                    @Override
+                    public void run() {
+                        updateList();
+                        listView.setItems(null);
+
+                    }
+                });
+                return null;
+            }
+        });
+        thread.setDaemon(true);
+        thread.start();
     }
 
     public void onClickFindButton() {
-        coordinates[0]=0.0;
-        coordinates[1]=0.0;
+        coordinates[0] = 0.0;
+        coordinates[1] = 0.0;
         loader.setVisible(true);
         listView.setItems(null);
 
@@ -156,8 +153,8 @@ public class Controller {
                     coordinates = parse(adress);
                 } catch (JSONException e) {
                     System.out.println("JSON ERROR");
-                    coordinates[0]=0.0;
-                    coordinates[1]=0.0;
+                    coordinates[0] = 0.0;
+                    coordinates[1] = 0.0;
                 }
 
                 Platform.runLater(new Runnable() {
@@ -165,9 +162,8 @@ public class Controller {
                     public void run() {
                         listView.setItems(null);
                         freeAmbulances.clear();
-                        if(!(coordinates[0]==0.0) && !(coordinates[1]==0.0))
-                        {
-                            updateAmbulanceList(coordinates[0],coordinates[1]);
+                        if (!(coordinates[0] == 0.0) && !(coordinates[1] == 0.0)) {
+                            updateAmbulanceList(coordinates[0], coordinates[1]);
                         }
                         updateList();
                         System.out.println("List updated");
@@ -181,7 +177,7 @@ public class Controller {
         });
         thread.setDaemon(true);
         thread.start();
-       }
+    }
 
     public static void showAlert() {
         Alert alert = new Alert(Alert.AlertType.WARNING);
