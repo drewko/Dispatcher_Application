@@ -1,15 +1,23 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
 <?import javafx.scene.control.ListView?>
 <?import javafx.scene.control.TextField?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.AnchorPane?>
 
-<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="308.0" prefWidth="377.0" xmlns="http://javafx.com/javafx/8.0.172-ea" xmlns:fx="http://javafx.com/fxml/1" fx:controller="sample.Controller">
+<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="307.0" prefWidth="373.0" xmlns="http://javafx.com/javafx/8.0.172-ea" xmlns:fx="http://javafx.com/fxml/1" fx:controller="sample.Controller">
 
       <ListView fx:id="listView" layoutX="14.0" layoutY="99.0" onMouseClicked="#onClickListView" prefHeight="200.0" prefWidth="275.0" />
    <Button fx:id="button" layoutX="295.0" layoutY="184.0" mnemonicParsing="false" onAction="#onClickButton" prefHeight="25.0" prefWidth="68.0" text="Send" />
    <TextField fx:id="text" layoutX="14.0" layoutY="39.0" prefHeight="25.0" prefWidth="200.0" />
    <Button fx:id="find" layoutX="233.0" layoutY="39.0" mnemonicParsing="false" onAction="#onClickFindButton" text="Find ambulance" />
+   <Label layoutX="14.0" layoutY="18.0" text="Adress: " />
+   <ImageView fx:id="loader" fitHeight="150.0" fitWidth="200.0" layoutX="52.0" layoutY="133.0" pickOnBounds="true" preserveRatio="true">
+      <image>
+         <Image url="@Loading_icon.gif" />
+      </image></ImageView>
    
 </AnchorPane>
